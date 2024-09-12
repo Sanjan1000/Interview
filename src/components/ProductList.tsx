@@ -1,4 +1,3 @@
-// src/components/ProductList.tsx
 import React, { useState } from 'react';
 import { Table, Button, Image } from 'antd';
 import { useGetProductsQuery } from '../app/services/productsApi';
@@ -24,12 +23,20 @@ const ProductList: React.FC = () => {
       title: 'Image',
       dataIndex: 'thumbnail',
       key: 'thumbnail',
-      render: (thumbnail: string) => <Image width={50} src={thumbnail} alt="product" />,
+      render: (thumbnail: string) => (
+        <Image
+          width={60}
+          src={thumbnail}
+          alt="product"
+          className="rounded-md border border-gray-300"
+        />
+      ),
     },
     {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
+      className: 'text-lg font-medium',
     },
     {
       title: 'Price',
@@ -60,9 +67,12 @@ const ProductList: React.FC = () => {
     {
       title: 'Action',
       key: 'action',
-      // Specify that record is of type Product
       render: (record: Product) => (
-        <Button type="primary" onClick={() => navigate(`/products/${record.id}`)}>
+        <Button
+          type="primary"
+          className="bg-violet-900 hover:bg-violet-800"
+          onClick={() => navigate(`/products/${record.id}`)}
+        >
           View Details
         </Button>
       ),
@@ -70,10 +80,10 @@ const ProductList: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '20px' }}>
-      {error && <p>Error loading products...</p>}
+    <div className="container mx-auto py-8 px-4">
+      {error && <p className="text-red-600 text-center">Error loading products...</p>}
       {isLoading ? (
-        <p>Loading products...</p>
+        <p className="text-center">Loading products...</p>
       ) : (
         <Table
           columns={columns}
@@ -84,7 +94,9 @@ const ProductList: React.FC = () => {
             pageSize,
             total: data?.total,
             onChange: (page) => setCurrentPage(page),
+            className: 'ant-pagination flex justify-center mt-4',
           }}
+          className="bg-white rounded-lg shadow-md"
         />
       )}
     </div>
