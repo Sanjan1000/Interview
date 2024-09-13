@@ -1,77 +1,143 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Image } from 'antd';
+import React, { useState } from 'react';
+import { Button, Table, Pagination } from 'antd';
 import { useGetProductsQuery } from '../app/services/productsApi';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../app/services/productsApi'; 
-import { useInView } from 'react-intersection-observer';
 
 const ProductList: React.FC = () => {
   const [page, setPage] = useState(1); // Track current page
-  const [products, setProducts] = useState<Product[]>([]);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10); // Items per page
+  const [loadAll, setLoadAll] = useState(false); // To load all items when limit=0
 
   const { data, isLoading, error } = useGetProductsQuery({
-    limit: pageSize,
-    skip: (page - 1) * pageSize,
+    limit: loadAll ? 0 : pageSize, // Use limit=0 to fetch all items if required
+    skip: loadAll ? 0 : (page - 1) * pageSize, // Skip is irrelevant when loading all items
   });
 
   const navigate = useNavigate();
-  const { ref, inView } = useInView({
-    threshold: 1.0,
-  });
 
-  // Load more products when the user scrolls near the bottom
-  useEffect(() => {
-    if (inView && !isLoading && data) {
-      setProducts((prevProducts) => [...prevProducts, ...data.products]);
-      setPage((prevPage) => prevPage + 1);
-    }
-  }, [inView, isLoading, data]);
+  // Handle pagination page change
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    setLoadAll(false); // Reset loading all items if user goes back to pagination
+  };
+
+  // Handle loading all items
+  const handleLoadAll = () => {
+    setLoadAll(true); // Set loadAll to true to fetch all items
+    setPage(1); // Reset to page 1
+  };
 
   const handleViewDetails = (id: number) => {
     navigate(`/products/${id}`);
   };
 
+  // Columns for the Ant Design Table
+  const columns = [
+    {
+      title: 'Thumbnail',
+      dataIndex: 'thumbnail',
+      key: 'thumbnail',
+      render: (thumbnail: string) => (
+        <img src={thumbnail} alt="thumbnail" style={{ width: '50px', borderRadius: '5px' }} />
+      ),
+    },
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
+    },
+    {
+      title: 'Brand',
+      dataIndex: 'brand',
+      key: 'brand',
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      render: (price: number, record: Product) => {
+        const discountedPrice = price * (1 - record.discountPercentage / 100);
+        return (
+          <>
+            <span style={{ textDecoration: 'line-through', color: '#aaa' }}>${price.toFixed(2)}</span>
+            <span style={{ color: 'green', marginLeft: '8px' }}>${discountedPrice.toFixed(2)}</span>
+          </>
+        );
+      },
+    },
+    {
+      title: 'Discount (%)',
+      dataIndex: 'discountPercentage',
+      key: 'discountPercentage',
+      render: (discountPercentage: number) => `${discountPercentage.toFixed(2)}%`,
+    },
+    {
+      title: 'Stock',
+      dataIndex: 'stock',
+      key: 'stock',
+    },
+    {
+      title: 'Rating',
+      dataIndex: 'rating',
+      key: 'rating',
+      render: (rating: number) => rating.toFixed(2),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_: any, record: Product) => (
+        <Button
+          type="primary"
+          className="bg-violet-900 hover:bg-violet-800"
+          onClick={() => handleViewDetails(record.id)}
+        >
+          View Details
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <div className="container mx-auto py-8 px-4">
       {error && <p className="text-red-600 text-center">Error loading products...</p>}
       {isLoading && <p className="text-center">Loading products...</p>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {products.map((product) => {
-          // Calculate discounted price
-          const discountedPrice = product.price * (1 - product.discountPercentage / 100);
-          
-          return (
-            <div key={product.id} className="border border-gray-300 rounded-lg p-4 bg-white shadow-md">
-              <Image
-                width={100}
-                src={product.thumbnail}
-                alt={product.title}
-                className="rounded-md border border-gray-300 mb-2"
-              />
-              <h3 className="text-lg font-medium mb-2">{product.title}</h3>
-              <p className="text-sm mb-2">Category: {product.category}</p>
-              <p className="text-sm mb-2">Brand: {product.brand}</p>
-              <p className="text-sm mb-2">Rating: {product.rating.toFixed(2)}</p>
-              <p className="text-sm mb-2">Stock: {product.stock}</p>
-              <p className="text-lg font-medium mt-2">
-                <span className="line-through text-gray-500">${product.price.toFixed(2)}</span> 
-                <span className="ml-2 text-green-600">${discountedPrice.toFixed(2)}</span>
-              </p>
-              <p className="text-sm text-red-500 mb-2 italic">Discount: {product.discountPercentage.toFixed(2)}%</p>
-              <Button
-                type="primary"
-                className="bg-violet-900 hover:bg-violet-800 mt-2"
-                onClick={() => handleViewDetails(product.id)}
-              >
-                View Details
-              </Button>
-            </div>
-          );
-        })}
-      </div>
-      {/* Infinite scroll trigger */}
-      <div ref={ref} className="h-2" />
+
+      {/* Ant Design Table */}
+      <Table
+        columns={columns}
+        dataSource={data?.products}
+        pagination={false} // Disable internal pagination, we handle it manually
+        rowKey="id" // Unique key for each row
+        loading={isLoading} // Show loading state
+      />
+
+      {/* Pagination Control */}
+      {!loadAll && (
+        <div className="flex justify-center mt-6">
+          <Pagination
+            current={page}
+            pageSize={pageSize}
+            total={data?.total || 0}
+            onChange={handlePageChange}
+            showSizeChanger={false} // Hide changing the number of items per page
+          />
+        </div>
+      )}
+
+      {/* Load All Items Button */}
+      {!loadAll && (
+        <div className="flex justify-center mt-4">
+          <Button type="primary" onClick={handleLoadAll}>
+            Load All Products
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
