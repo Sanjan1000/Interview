@@ -19,6 +19,10 @@ interface ProductResponse {
   skip: number;
 }
 
+interface CategoryResponse {
+  categories: string[];
+}
+
 // Create the API slice
 export const productsApi = createApi({
   reducerPath: 'productsApi',
@@ -33,8 +37,27 @@ export const productsApi = createApi({
     getProductById: builder.query<Product, number>({
       query: (id) => `products/${id}`,
     }),
+
+    // Query to get all categories
+    getCategories: builder.query<string[], void>({
+      query: () => 'products/categories',
+    }),
+
+    // Mutation to update a product by ID
+    updateProduct: builder.mutation<Product, { id: number; data: Partial<Product> }>({
+      query: ({ id, data }) => ({
+        url: `products/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+    }),
   }),
 });
 
-// Export the hooks to fetch data
-export const { useGetProductsQuery, useGetProductByIdQuery } = productsApi;
+// Export the hooks to fetch data and update
+export const {
+  useGetProductsQuery,
+  useGetProductByIdQuery,
+  useGetCategoriesQuery,
+  useUpdateProductMutation,
+} = productsApi;

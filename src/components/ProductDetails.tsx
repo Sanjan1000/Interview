@@ -52,7 +52,10 @@ const ProductDetail: React.FC = () => {
           {/* Product Details */}
           <div>
             <div className="flex gap-4 mt-6">
-              <Button type="dashed">
+              <Button
+                type="dashed"
+                onClick={() => navigate(`/products/${product.id}/edit`)} // Navigate to edit page
+              >
                 Edit
                 <EditOutlined />
               </Button>
