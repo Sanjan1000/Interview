@@ -132,8 +132,8 @@ const ProductList: React.FC = () => {
 
       {/* Load All Items Button */}
       {!loadAll && (
-        <div className="flex justify-center mt-4">
-          <Button type="primary" onClick={handleLoadAll}>
+        <div className="flex justify-center mt-4" >
+          <Button className='bg-violet-900 hover:bg-violet-800' type="primary" onClick={handleLoadAll}>
             Load All Products
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Rate, InputNumber, Space, message } from 'antd';
-import { MinusCircleOutlined, PlusOutlined,ArrowLeftOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -23,7 +23,11 @@ const ProductEdit: React.FC = () => {
 
         // Get product categories
         const categoriesResponse = await axios.get('https://dummyjson.com/products/categories');
-        setCategories(categoriesResponse.data);
+        
+        // Extract category names from the response and update state
+        const categoryNames = categoriesResponse.data.map((category: { name: string }) => category.name);
+        setCategories(categoryNames);
+
       } catch (error) {
         message.error('Error fetching product or categories.');
       }
@@ -53,7 +57,6 @@ const ProductEdit: React.FC = () => {
   if (!product) return <p>Loading product data...</p>;
 
   return (
-    
     <Form form={form} onFinish={onFinish} initialValues={product} layout="vertical">
       <Button
           type="default"
@@ -61,8 +64,9 @@ const ProductEdit: React.FC = () => {
           className="border-none"
           style={{ marginBottom: '20px' }}
         >
-          <ArrowLeftOutlined  style={{ marginRight: '8px' }} />
-        </Button>
+          <ArrowLeftOutlined style={{ marginRight: '8px' }} />
+      </Button>
+      
       <Form.Item name="title" label="Title" rules={[{ required: true, message: 'Please input product title!' }]}>
         <Input placeholder="Product Title" />
       </Form.Item>

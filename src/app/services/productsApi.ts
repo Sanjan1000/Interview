@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// Product interface, add any additional fields if needed
 export interface Product {
   id: number;
   title: string;
@@ -12,15 +13,19 @@ export interface Product {
   thumbnail: string;
 }
 
+// Category interface based on the JSON structure
+export interface Category {
+  slug: string;
+  name: string;
+  url: string;
+}
+
+// Product response structure for pagination
 interface ProductResponse {
   products: Product[];
   total: number;
   limit: number;
   skip: number;
-}
-
-interface CategoryResponse {
-  categories: string[];
 }
 
 // Create the API slice
@@ -39,7 +44,7 @@ export const productsApi = createApi({
     }),
 
     // Query to get all categories
-    getCategories: builder.query<string[], void>({
+    getCategories: builder.query<Category[], void>({
       query: () => 'products/categories',
     }),
 
