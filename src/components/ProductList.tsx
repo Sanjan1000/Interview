@@ -1,38 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Table, Pagination } from 'antd';
 import { useGetProductsQuery } from '../app/services/productsApi';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../app/services/productsApi';
 
 const ProductList: React.FC = () => {
-  const [page, setPage] = useState(1); // Track current page
-  const [pageSize, setPageSize] = useState(10); // Items per page
-  const [loadAll, setLoadAll] = useState(false); // To load all items when limit=0
+  const [page, setPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(10);
+  const [loadAll, setLoadAll] = React.useState(false);
 
   const { data, isLoading, error } = useGetProductsQuery({
-    limit: loadAll ? 0 : pageSize, // Use limit=0 to fetch all items if required
-    skip: loadAll ? 0 : (page - 1) * pageSize, // Skip is irrelevant when loading all items
+    limit: loadAll ? 0 : pageSize,
+    skip: loadAll ? 0 : (page - 1) * pageSize,
   });
 
   const navigate = useNavigate();
 
-  // Handle pagination page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    setLoadAll(false); // Reset loading all items if user goes back to pagination
+    setLoadAll(false);
   };
 
-  // Handle loading all items
   const handleLoadAll = () => {
-    setLoadAll(true); // Set loadAll to true to fetch all items
-    setPage(1); // Reset to page 1
+    setLoadAll(true);
+    setPage(1);
   };
 
   const handleViewDetails = (id: number) => {
     navigate(`/products/${id}`);
   };
 
-  // Columns for the Ant Design Table
   const columns = [
     {
       title: 'Image',
@@ -41,13 +38,13 @@ const ProductList: React.FC = () => {
       render: (thumbnail: string) => (
         <img src={thumbnail} alt="thumbnail" className="w-12 h-12 rounded-md" />
       ),
-      width: 100, // Set width for better responsiveness
+      width: 100,
     },
     {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
-      width: 150, // Adjusted width for mobile views
+      width: 150,
     },
     {
       title: 'Category',
@@ -66,7 +63,7 @@ const ProductList: React.FC = () => {
       dataIndex: 'price',
       key: 'price',
       render: (price: number, record: Product) => {
-        const discountedPrice = price * (1 - record.discountPercentage / 100);
+        const discountedPrice = price * (1 - (record.discountPercentage || 0) / 100);
         return (
           <>
             <span className="line-through text-gray-400">${price.toFixed(2)}</span>
@@ -117,18 +114,16 @@ const ProductList: React.FC = () => {
       {error && <p className="text-red-600 text-center">Error loading products...</p>}
       {isLoading && <p className="text-center">Loading products...</p>}
 
-      {/* Responsive table container with horizontal scroll for mobile */}
       <div className="overflow-x-auto">
         <Table
           columns={columns}
           dataSource={data?.products}
-          pagination={false} // Disable internal pagination, we handle it manually
-          rowKey="id" // Unique key for each row
-          loading={isLoading} // Show loading state
+          pagination={false}
+          rowKey="id"
+          loading={isLoading}
         />
       </div>
 
-      {/* Pagination Control */}
       {!loadAll && (
         <div className="flex justify-center mt-6">
           <Pagination
@@ -136,12 +131,11 @@ const ProductList: React.FC = () => {
             pageSize={pageSize}
             total={data?.total || 0}
             onChange={handlePageChange}
-            showSizeChanger={false} // Hide changing the number of items per page
+            showSizeChanger={false}
           />
         </div>
       )}
 
-      {/* Load All Items Button */}
       {!loadAll && (
         <div className="flex justify-center mt-4">
           <Button className="bg-violet-900 hover:bg-violet-800" type="primary" onClick={handleLoadAll}>

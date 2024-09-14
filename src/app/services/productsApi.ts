@@ -1,16 +1,48 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// Product interface, add any additional fields if needed
+// Interface for the product reviews
+interface ProductReview {
+  rating: number;
+  comment: string;
+  reviewerName: string;
+  reviewerEmail: string;
+  date: string;
+}
+
+// Interface for product meta data
+interface ProductMeta {
+  barcode: string;
+  qrCode: string;
+}
+
+// Interface for product dimensions
+interface ProductDimensions {
+  width: number;
+  height: number;
+  depth: number;
+}
+
+// Product interface, expanded with additional fields like discount, tags, meta, and dimensions
 export interface Product {
   id: number;
   title: string;
   description: string;
   price: number;
+  discountPercentage: number; // Added discount percentage field
   rating: number;
   stock: number;
   brand: string;
   category: string;
   thumbnail: string;
+  tags: string[]; // Added tags array
+  reviews: ProductReview[]; // Added reviews array
+  meta: ProductMeta; // Added meta data field
+  weight?: number; // Optional weight field
+  dimensions?: ProductDimensions; // Optional dimensions field
+  warrantyInformation?: string; // Optional warranty information
+  shippingInformation?: string; // Optional shipping information
+  availabilityStatus?: string; // Optional availability status
+  sku?: string; // Optional SKU field
 }
 
 // Category interface based on the JSON structure
