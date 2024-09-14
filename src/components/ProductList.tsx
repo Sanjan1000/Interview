@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Table, Pagination } from 'antd';
 import { useGetProductsQuery } from '../app/services/productsApi';
 import { useNavigate } from 'react-router-dom';
-import { Product } from '../app/services/productsApi'; 
+import { Product } from '../app/services/productsApi';
 
 const ProductList: React.FC = () => {
   const [page, setPage] = useState(1); // Track current page
@@ -35,27 +35,31 @@ const ProductList: React.FC = () => {
   // Columns for the Ant Design Table
   const columns = [
     {
-      title: 'Thumbnail',
+      title: 'Image',
       dataIndex: 'thumbnail',
       key: 'thumbnail',
       render: (thumbnail: string) => (
-        <img src={thumbnail} alt="thumbnail" style={{ width: '50px', borderRadius: '5px' }} />
+        <img src={thumbnail} alt="thumbnail" className="w-12 h-12 rounded-md" />
       ),
+      width: 100, // Set width for better responsiveness
     },
     {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
+      width: 150, // Adjusted width for mobile views
     },
     {
       title: 'Category',
       dataIndex: 'category',
       key: 'category',
+      width: 120,
     },
     {
       title: 'Brand',
       dataIndex: 'brand',
       key: 'brand',
+      width: 120,
     },
     {
       title: 'Price',
@@ -65,31 +69,35 @@ const ProductList: React.FC = () => {
         const discountedPrice = price * (1 - record.discountPercentage / 100);
         return (
           <>
-            <span style={{ textDecoration: 'line-through', color: '#aaa' }}>${price.toFixed(2)}</span>
-            <span style={{ color: 'green', marginLeft: '8px' }}>${discountedPrice.toFixed(2)}</span>
+            <span className="line-through text-gray-400">${price.toFixed(2)}</span>
+            <span className="text-green-600 ml-2">${discountedPrice.toFixed(2)}</span>
           </>
         );
       },
+      width: 150,
     },
     {
       title: 'Discount (%)',
       dataIndex: 'discountPercentage',
       key: 'discountPercentage',
       render: (discountPercentage: number) => `${discountPercentage.toFixed(2)}%`,
+      width: 120,
     },
     {
       title: 'Stock',
       dataIndex: 'stock',
       key: 'stock',
+      width: 100,
     },
     {
       title: 'Rating',
       dataIndex: 'rating',
       key: 'rating',
       render: (rating: number) => rating.toFixed(2),
+      width: 100,
     },
     {
-      title: 'Action',
+      title: 'Description',
       key: 'action',
       render: (_: any, record: Product) => (
         <Button
@@ -100,6 +108,7 @@ const ProductList: React.FC = () => {
           View Details
         </Button>
       ),
+      width: 150,
     },
   ];
 
@@ -108,14 +117,16 @@ const ProductList: React.FC = () => {
       {error && <p className="text-red-600 text-center">Error loading products...</p>}
       {isLoading && <p className="text-center">Loading products...</p>}
 
-      {/* Ant Design Table */}
-      <Table
-        columns={columns}
-        dataSource={data?.products}
-        pagination={false} // Disable internal pagination, we handle it manually
-        rowKey="id" // Unique key for each row
-        loading={isLoading} // Show loading state
-      />
+      {/* Responsive table container with horizontal scroll for mobile */}
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={data?.products}
+          pagination={false} // Disable internal pagination, we handle it manually
+          rowKey="id" // Unique key for each row
+          loading={isLoading} // Show loading state
+        />
+      </div>
 
       {/* Pagination Control */}
       {!loadAll && (
@@ -132,8 +143,8 @@ const ProductList: React.FC = () => {
 
       {/* Load All Items Button */}
       {!loadAll && (
-        <div className="flex justify-center mt-4" >
-          <Button className='bg-violet-900 hover:bg-violet-800' type="primary" onClick={handleLoadAll}>
+        <div className="flex justify-center mt-4">
+          <Button className="bg-violet-900 hover:bg-violet-800" type="primary" onClick={handleLoadAll}>
             Load All Products
           </Button>
         </div>
