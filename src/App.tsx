@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProductList from './components/ProductList';
-import ProductDetail from './components/ProductDetails';
+import ProductDetails from './components/ProductDetails';
 import ProductEdit from './components/ProductEdit';
 
 const App: React.FC = () => {
@@ -9,7 +9,7 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<ProductList />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/products/:id/edit" element={<ProductEdit />} />
       </Routes>
     </Router>

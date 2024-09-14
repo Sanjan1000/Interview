@@ -7,7 +7,7 @@ import { ArrowLeftOutlined, EditOutlined,DownOutlined  } from '@ant-design/icons
 
 const { Content } = Layout;
 
-const ProductDetail: React.FC = () => {
+const ProductDetails: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data, isLoading, error } = useGetProductsQuery({ limit: 0, skip: 0 }); // Get all products (simplification)
@@ -136,4 +136,4 @@ const ProductDetail: React.FC = () => {
   );
 };
 
-export default ProductDetail;
+export default ProductDetails;
