@@ -6,7 +6,7 @@ import { Product } from '../app/services/productsApi';
 
 const ProductList: React.FC = () => {
   const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize] = React.useState(10);
   const [loadAll, setLoadAll] = React.useState(false);
 
   const { data, isLoading, error } = useGetProductsQuery({
