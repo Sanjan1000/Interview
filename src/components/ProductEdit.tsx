@@ -70,7 +70,6 @@ const ProductEdit: React.FC = () => {
         className="border-none mb-4 flex items-center"
       >
         <ArrowLeftOutlined className="mr-2" />
-        Back
       </Button>
 
       <Form.Item 
