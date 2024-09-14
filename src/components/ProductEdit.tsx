@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Rate, InputNumber, Space, message } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined,ArrowLeftOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -53,7 +53,16 @@ const ProductEdit: React.FC = () => {
   if (!product) return <p>Loading product data...</p>;
 
   return (
+    
     <Form form={form} onFinish={onFinish} initialValues={product} layout="vertical">
+      <Button
+          type="default"
+          onClick={() => navigate(-1)}
+          className="border-none"
+          style={{ marginBottom: '20px' }}
+        >
+          <ArrowLeftOutlined  style={{ marginRight: '8px' }} />
+        </Button>
       <Form.Item name="title" label="Title" rules={[{ required: true, message: 'Please input product title!' }]}>
         <Input placeholder="Product Title" />
       </Form.Item>

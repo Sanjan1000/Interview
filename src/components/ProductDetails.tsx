@@ -26,13 +26,14 @@ const ProductDetail: React.FC = () => {
         
         {/* Back Button */}
         <Button
-          type="default"
-          onClick={() => navigate(-1)}
-          className="border-none"
-          style={{ marginBottom: '20px' }}
-        >
-          <ArrowLeftOutlined  style={{ marginRight: '8px' }} />
-        </Button>
+  type="default"
+  onClick={() => navigate('/')}  // Ensure this goes back to ProductList
+  className="border-none"
+  style={{ marginBottom: '20px' }}
+>
+  <ArrowLeftOutlined style={{ marginRight: '8px' }} />
+  
+</Button>
 
         {/* Layout for product image and details */}
         <div className="product-detail-layout lg:grid lg:grid-cols-2 lg:gap-8">
